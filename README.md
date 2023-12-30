@@ -20,6 +20,7 @@ Examples:
 - Pygame - handles audio
 - Mutagen - handles MP3 metadata
 - PYTTSX3 - Handles TTS
-These dependencies can be installed using Pip.
-### Install Dependencies Command
+
+These dependencies can be installed using Pip, or your Python package manager of choice.
+### Install Dependencies Command - Pip
 `pip install pygame mutagen pyttsx3`
