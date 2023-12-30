@@ -53,11 +53,11 @@ def music():
     song = musicpath + pathtype + random.choice(musicfiles)
     # Decide song announcements
     if songannounce == True:
-      announcelocation = random.randint(1,3)
+        announcelocation = random.randint(1,3)
     else:
-      announcelocation = "off"
+        announcelocation = "off"
     
-    print(f"[INFO] Location for song announcement is: {announcelocation}. Starting song {song}...")
+    log("song", f"Location for song announcement is: {announcelocation}. Starting song {song}...")
 
     # Start song
     sound = pygame.mixer.Sound(song)
@@ -66,7 +66,7 @@ def music():
     sound.set_volume(volume)
     audio = EasyID3(song)
 
-    print(f"[SONG] Song {audio['title']} by {audio['artist']} is playing...")
+    log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
 
     # If an announcement will occur, generate text to speech now
     if announcelocation != 4:
@@ -75,37 +75,37 @@ def music():
         engine.setProperty('voice', voices[1].id)
         text = f"Here's {audio['artist']} with {audio['title']}"
         engine.say(text)
-        print(f"[TTS] Generated TTS. Waiting for location...")
-        print(f"[TTS] TTS Message: {text}")
+        log("tts", f"Generated TTS. Waiting for location...")
+        log("tts", f"TTS Message: {text}")
 
     if announcelocation == 1:
         # Wait for song to start
         time.sleep(5)
 
-        print("[TTS] Preparing for TTS... fading down...")
+        log("tts", "Preparing for TTS... fading down...")
         # Fade down
         for i in range(0,8):
             volume = volume - 0.1
             sound.set_volume(volume)
             time.sleep(0.1)
         
-        print(f"[TTS] Playing TTS.")
+        log("tts", f"Playing TTS.")
         # Run TTS
         engine.runAndWait()
         
         time.sleep(1)
         
-        print("[TTS] Fading up...")
+        log("tts", "Fading up...")
         # Fade up
         for i in range(0,8):
             volume = volume + 0.1
             sound.set_volume(volume)
             time.sleep(0.1)
-        print("[TTS] TTS Complete.")
+        print("tts", "TTS Complete.")
     # Wait for song to complete...
     while channel.get_busy() == True:
         time.sleep(0.5)
-    print("[SONG] Song complete.")
+    print("song", "Song complete.")
 
 
 music()
