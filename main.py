@@ -15,22 +15,27 @@ def tobool(user):
         return False
 
 # ------ To Boolean Function ------
-def optionyn(question, var, default):
-    user = input(f"{question} ({default}) (y/n)>").lower()
+def optionyn(question, default):
+    user = str(input(f"{question} ({default}) (y/n)>")).lower()
     if user == "y":
-        exec(var + " = " + tobool(user))
+        return tobool(user)
     elif user == "n":
-        exec(var + " = " + tobool(user))
+        return tobool(user)
     else:
         print("Invalid option, using default option.")
-        exec(var + " = " + default)
+        return default
 
-def optionpath(question, var, default):
-    user = input(f"{question} >")
+def optionpath(question, default):
+    user = str(input(f"{question} >"))
     if os.path.isdir(user):
-        exec(var + " = " + user)
+        user = user.replace("\\", "\\\\")
+        print(user)
+        return user
     else:
         print("Path selected is invalid, using default path.")
+        default = default.replace("\\", "\\\\")
+        print(default)
+        return default
 
 # ------ Logging Function ------
 def log(type, content):
@@ -88,13 +93,15 @@ except pygame.error as error:
 
 # ------ Interactive Setup ------
 def InteractiveSetup():
-    optionyn("Enable indents? (not implemented yet)", "indent", True)
-    optionyn("Enable TTS song announcements?", "songannounce", True)
-    optionyn("Enable commentary?", "commentary", True)
-    optionyn("Enable adverts?", "adverts", True)
-    optionpath("Please enter the music path.", "musicpath", (path + pathtype + "music"))
-    optionpath("Please enter the commentary path.", "commentarypath", (path + pathtype + "commentary"))
-    optionpath("Please enter the advert path.", "advertpath", (path + pathtype + "advert"))
+    global indent, songannounce, commentary, adverts, musicpath, commentarypath, advertpath
+
+    indent = optionyn("Enable indents? (not implemented yet)", True)
+    songannounce = optionyn("Enable TTS song announcements?", True)
+    commentary = optionyn("Enable commentary?", True)
+    adverts = optionyn("Enable adverts?", True)
+    musicpath = optionpath("Please enter the music path.", (path + pathtype + "music"))
+    commentarypath = optionpath("Please enter the commentary path.", (path + pathtype + "commentary"))
+    advertpath = optionpath("Please enter the advert path.", (path + pathtype + "advert"))
 
 # ------ Setup Handoff ------
 option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
@@ -113,15 +120,15 @@ music = []
 # ------ Generate Arrays ------
 # Music Files
 log("init", "Detecting music files...")
-musicfiles = glob.glob(musicpath)
+musicfiles = os.listdir(musicpath)
 log("init", f"Music detection complete, {len(musicfiles)} music files detected.")
 # Commentary Files
 log("init", "Detecting commentary files...")
-commentaryfiles = glob.glob(commentarypath)
+commentaryfiles = os.listdir(commentarypath)
 log("init", f"Commentary detection complete, {len(commentaryfiles)} commentary files detected.")
 # Advert Files
 log("init", "Detecting advert files...")
-advertfiles = glob.glob(advertpath)
+advertfiles = os.listdir(advertpath)
 log("init", f"Advert detection complete, {len(advertfiles)} advert files detected.")
 
 log("init", "Init complete! Handing over to main function.")
@@ -139,7 +146,12 @@ log("main", f"\nPath Information:\nRunning Path: {path}\nPath Slash Type: {patht
 # ------ Music Function ------
 def music():
     # Select song
-    song = musicpath + pathtype + random.choice(musicfiles)
+    while True:
+        song = musicpath + pathtype + random.choice(musicfiles)
+        if ("AlbumArt_" in song) == True:
+            continue
+        else:
+            break
     # Decide song announcements
     if songannounce == True:
         announcelocation = random.randint(1,1)
