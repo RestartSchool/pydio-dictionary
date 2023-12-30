@@ -4,7 +4,7 @@
 # ------ Logging Function ------
 def log(type, content):
     # Writes to a log for each function, and a main log too
-    string = f"{type.upper()} {content}"
+    string = f"\n[{type.upper()}] {content}"
     filename = f"{type.lower()}.log"
     speclog = open(filename, "a")
     mainlog = open("main.log", "a")
