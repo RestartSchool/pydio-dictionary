@@ -1,12 +1,6 @@
 # AI Radio Project
 # Restart - 2023
 
-# ------ Pygame Channels ------
-# Channel 1 = Music
-# Channel 2 = Commentary
-# Channel 3 = Indent
-# Channel 4 = Adverts
-
 # ------ Imports ------
 import pygame
 import random
@@ -23,10 +17,16 @@ indent = True
 songannounce = True
 commentary = True
 adverts = True
-musicpath = "\\music"
-commentarypath = "\\commentary"
-advertpath = "\\advert"
-song = "C:\\Users\\Samuel\\Documents\\AI Radio\\airadio\\music\\04 I Wonder.mp3"
+path = os.getcwd()
+pathtype = "\\"
+musicpath = path + pathtype + "music"
+commentarypath = pathtype + "commentary"
+advertpath = pathtype + "advert"
+music = []
+
+# ------ Generate Arrays ------
+musicfiles = os.listdir(musicpath)
+print(musicfiles)
 
 # ------ Announcement Locations -----
 # 1 = start of song
@@ -34,12 +34,28 @@ song = "C:\\Users\\Samuel\\Documents\\AI Radio\\airadio\\music\\04 I Wonder.mp3"
 # 3 = song finished
 # 4 = none
 
+# ------ Logging Function ------
+def log(type, content):
+    # Writes to a log for each function, and a main log too
+    string = f"{type.upper()} {content}"
+    filename = f"{type.lower()}.log"
+    speclog = open(filename, "a")
+    mainlog = "main.log", "a"
+    speclog.write(string)
+    mainlog.write(string)
+    speclog.close()
+    mainlog.close()
+    print(string)
+
 # ------ Music Handler ------
 def music():
+    # Select song
+    song = musicpath + pathtype + random.choice(musicfiles)
     # Decide song announcements
     if songannounce == True:
-        #announcelocation = random.randint(1,4)
-        announcelocation = 1
+      announcelocation = random.randint(1,3)
+    else:
+      announcelocation = "off"
     
     print(f"[INFO] Location for song announcement is: {announcelocation}. Starting song {song}...")
 
@@ -86,8 +102,10 @@ def music():
             sound.set_volume(volume)
             time.sleep(0.1)
         print("[TTS] TTS Complete.")
+    # Wait for song to complete...
     while channel.get_busy() == True:
         time.sleep(0.5)
     print("[SONG] Song complete.")
+
 
 music()
