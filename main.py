@@ -183,7 +183,7 @@ def play(type):
             channel = sound.play()
             while channel.get_busy() == True:
                 time.sleep(0.5)
-            log("ad", "Complete.")
+        log("ad", "Complete.")
 
 def main():
     while True:
