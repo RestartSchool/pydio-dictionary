@@ -1,14 +1,21 @@
 # Pydio
-# Restart - 2023
+# Made with ❤️ by Restart - 2023
+
+import os # OS - Several File Functions
+# Get current system path
+path = os.getcwd()
+pathtype = "\\"
 
 # ------ Logging Function ------
 def log(type, content):
+    # Generate log path
+    logpath = path + pathtype + "logs"
     # Writes to a log for each function, and a main log too
     printstring = f"[{type.upper()}] {content}"
     filestring = f"\n[{type.upper()}] {content}"
-    filename = f"{type.lower()}.log"
+    filename = f"{path}{pathtype}logs{pathtype}{type.lower()}.log"
     speclog = open(filename, "a")
-    mainlog = open("main.log", "a")
+    mainlog = open(f"{path}{pathtype}logs{pathtype}main.log", "a")
     speclog.write(filestring)
     mainlog.write(filestring)
     speclog.close()
@@ -32,7 +39,6 @@ def errorhandler(type, error):
 try:
     import pygame # Pygame - Audio
     import random # Random - Random
-    import os # OS - Several File Functions
     import pyttsx3 # PYTTSX3 - Text to Speech
     from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
     log("init", "Dependencies loaded.")
@@ -54,8 +60,6 @@ indent = True
 songannounce = True
 commentary = True
 adverts = True
-path = os.getcwd()
-pathtype = "\\"
 musicpath = path + pathtype + "music"
 commentarypath = path + pathtype + "commentary"
 advertpath = path + pathtype + "advert"
@@ -76,6 +80,10 @@ advertfiles = os.listdir(advertpath)
 log("init", f"Advert detection complete, {len(advertfiles)} advert files detected.")
 
 log("init", "Init complete! Handing over to main function.")
+
+# Overview Logs
+log("main", f"\nWelcome! Overview:\nIndents Activated? {indent}\nSong Announce TTS Activated? {songannounce}\nCommentary Activated? {commentary}\nAdverts Activated? {adverts}\n")
+log("main", f"\nPath Information:\nRunning Path: {path}\nPath Slash Type: {pathtype}\nMusic Path: {musicpath}\nMusic Path: {commentarypath}\nMusic Path: {advertpath}\n")
 
 # ------ Announcement Locations -----
 # 1 = start of song
@@ -172,10 +180,12 @@ def play(type):
                 selection = advertpath + pathtype + random.choice(advertfiles)
                 log("ad", f"Trying {selection}...")
                 if advertsplayed.count(selection) == 0:
+                    # This advert has not been played yet, play it and add it to the played list
                     advertsplayed.append(selection)
                     log("ad", f"{selection} has not been played yet! Selecting it.")
                     break
                 else:
+                    # Advert has already been played, continue search
                     log("ad", f"{selection} has already been played, trying again...")
                     continue
             # Play ad
@@ -196,7 +206,6 @@ def main():
         log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
         for i in range(0, rngtriggeradvert):
             rngcommentary = random.randint(0,1)
-            log("main", "Commentary selected.")
             if rngcommentary == 0:
                 log("main", "No commentary selected!")
                 log("main", "Calling music function.")
