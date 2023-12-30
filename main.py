@@ -66,6 +66,8 @@ log("init", "Detecting music files...")
 musicfiles = os.listdir(musicpath)
 log("init", f"Music detection complete, {len(musicfiles)} music files detected.")
 
+
+log("init", "Init complete! Handing over to main function.")
 # ------ Announcement Locations -----
 # 1 = start of song
 # 2 = end of song
@@ -78,7 +80,7 @@ def music():
     song = musicpath + pathtype + random.choice(musicfiles)
     # Decide song announcements
     if songannounce == True:
-        announcelocation = random.randint(1,3)
+        announcelocation = random.randint(1,1)
     else:
         announcelocation = "off"
     
@@ -126,10 +128,10 @@ def music():
             volume = volume + 0.1
             sound.set_volume(volume)
             time.sleep(0.1)
-        print("tts", "TTS Complete.")
+        log("tts", "TTS Complete.")
     # Wait for song to complete...
     while channel.get_busy() == True:
         time.sleep(0.5)
-    print("song", "Song complete.")
+    log("song", "Song complete.")
 
 music()
