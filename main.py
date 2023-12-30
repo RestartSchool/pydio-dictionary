@@ -57,14 +57,23 @@ adverts = True
 path = os.getcwd()
 pathtype = "\\"
 musicpath = path + pathtype + "music"
-commentarypath = pathtype + "commentary"
-advertpath = pathtype + "advert"
+commentarypath = path + pathtype + "commentary"
+advertpath = path + pathtype + "advert"
 music = []
 
 # ------ Generate Arrays ------
+# Music Files
 log("init", "Detecting music files...")
 musicfiles = os.listdir(musicpath)
 log("init", f"Music detection complete, {len(musicfiles)} music files detected.")
+# Commentary Files
+log("init", "Detecting commentary files...")
+commentaryfiles = os.listdir(commentarypath)
+log("init", f"Commentary detection complete, {len(commentaryfiles)} commentary files detected.")
+# Advert Files
+log("init", "Detecting advert files...")
+advertfiles = os.listdir(advertpath)
+log("init", f"Advert detection complete, {len(advertfiles)} advert files detected.")
 
 
 log("init", "Init complete! Handing over to main function.")
@@ -130,8 +139,68 @@ def music():
             time.sleep(0.1)
         log("tts", "TTS Complete.")
     # Wait for song to complete...
-    while channel.get_busy() == True:
-        time.sleep(0.5)
+    # while channel.get_busy() == True:
+    #     time.sleep(0.5)
+    time.sleep(5)
+    sound.stop()
     log("song", "Song complete.")
 
-music()
+def play(type):
+    if type == "commentary":
+        log("comm", "Commentary selected.")
+        # Pick random commentary and play it
+        selection = commentarypath + pathtype + random.choice(commentaryfiles)
+        sound = pygame.mixer.Sound(selection)
+        channel = sound.play()
+        log("comm", f"Playing {selection}.")
+        while channel.get_busy() == True:
+            time.sleep(0.5)
+        log("comm", "Complete.")
+    elif type == "advert":
+        advertsplayed = []
+        # Decide amount of ads
+        log("ad", f"Advert selected.")
+        if len(advertfiles) >= 4:
+            rngadvertamount = random.randint(2,4)
+        else:
+            rngadvertamount = len(advertfiles)
+        log("ad", f"RNG has decided {rngadvertamount} ads will be played!")
+        for i in range(0, rngadvertamount):
+            # Check if ad has already been played
+            while True:
+                selection = advertpath + pathtype + random.choice(advertfiles)
+                log("ad", f"Trying {selection}...")
+                if advertsplayed.count(selection) == 0:
+                    advertsplayed.append(selection)
+                    log("ad", f"{selection} has not been played yet! Selecting it.")
+                    break
+                else:
+                    log("ad", f"{selection} has already been played, trying again...")
+                    continue
+            # Play ad
+            log("ad", f"Playing {selection}.")
+            sound = pygame.mixer.Sound(selection)
+            channel = sound.play()
+            while channel.get_busy() == True:
+                time.sleep(0.5)
+            log("ad", "Complete.")
+
+def main():
+    while True:
+        if len(musicfiles) >= 4:
+            rngtriggeradvert = random.randint(2,4)
+        else:
+            rngtriggeradvert = len(musicfiles)
+        for i in range(0, rngtriggeradvert):
+            rngcommentary = random.randint(0,1)
+            if rngcommentary == 0:
+                music()
+            elif rngcommentary == 1:
+                play("commentary")
+                music()
+        if adverts == True:
+            play("advert")
+        else:
+            continue
+
+main()

@@ -1,6 +1,7 @@
 \music 
 \indents 
 \commentary
+\advert
 *.log
 .replit
 replit.nix
