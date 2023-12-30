@@ -75,15 +75,15 @@ log("init", "Detecting advert files...")
 advertfiles = os.listdir(advertpath)
 log("init", f"Advert detection complete, {len(advertfiles)} advert files detected.")
 
-
 log("init", "Init complete! Handing over to main function.")
+
 # ------ Announcement Locations -----
 # 1 = start of song
 # 2 = end of song
 # 3 = song finished
 # "off" = none
 
-# ------ Music Handler ------
+# ------ Music Function ------
 def music():
     # Select song
     song = musicpath + pathtype + random.choice(musicfiles)
@@ -145,6 +145,7 @@ def music():
     sound.stop()
     log("song", "Song complete.")
 
+# ------ General Playback Function ------
 def play(type):
     if type == "commentary":
         log("comm", "Commentary selected.")
@@ -185,13 +186,14 @@ def play(type):
                 time.sleep(0.5)
         log("ad", "Complete.")
 
+# ------ Main Function ------
 def main():
     while True:
         if len(musicfiles) >= 4:
             rngtriggeradvert = random.randint(2,4)
         else:
             rngtriggeradvert = len(musicfiles)
-        log("main", f"RNG has decided {rngadvertamount} songs will be played before adverts!")
+        log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
         for i in range(0, rngtriggeradvert):
             rngcommentary = random.randint(0,1)
             log("main", "Commentary selected.")
