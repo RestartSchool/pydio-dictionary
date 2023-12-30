@@ -7,6 +7,36 @@ import os
 path = os.getcwd()
 pathtype = "\\"
 
+# ------ To Boolean Function ------
+def tobool(user):
+    if user.lower() == "y":
+        return True
+    else:
+        return False
+
+# ------ To Boolean Function ------
+def optionyn(question, default):
+    user = str(input(f"{question} ({default}) (y/n)>")).lower()
+    if user == "y":
+        return tobool(user)
+    elif user == "n":
+        return tobool(user)
+    else:
+        print("Invalid option, using default option.")
+        return default
+
+def optionpath(question, default):
+    user = str(input(f"{question} >"))
+    if os.path.isdir(user):
+        user = user.replace("\\", "\\\\")
+        print(user)
+        return user
+    else:
+        print("Path selected is invalid, using default path.")
+        default = default.replace("\\", "\\\\")
+        print(default)
+        return default
+
 # ------ Logging Function ------
 def log(type, content):
     # Generate log path
@@ -46,6 +76,7 @@ try:
     import random # Random - Random
     import pyttsx3 # PYTTSX3 - Text to Speech
     from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
+    import glob
     log("init", "Dependencies loaded.")
 except ModuleNotFoundError as error:
     log("init", "A module has failed to import! Please ensure you have installed all required dependencies. The error handler will be called.")
@@ -60,14 +91,30 @@ except pygame.error as error:
     log("init", "Pygame initialisation has failed! The error handler will be called.")
     errorhandler("init", error)
 
+# ------ Interactive Setup ------
+def InteractiveSetup():
+    global indent, songannounce, commentary, adverts, musicpath, commentarypath, advertpath
+
+    indent = optionyn("Enable indents? (not implemented yet)", True)
+    songannounce = optionyn("Enable TTS song announcements?", True)
+    commentary = optionyn("Enable commentary?", True)
+    adverts = optionyn("Enable adverts?", True)
+    musicpath = optionpath("Please enter the music path.", (path + pathtype + "music"))
+    commentarypath = optionpath("Please enter the commentary path.", (path + pathtype + "commentary"))
+    advertpath = optionpath("Please enter the advert path.", (path + pathtype + "advert"))
+
+# ------ Setup Handoff ------
+option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
+while True:
+    if option == 1:
+        InteractiveSetup()
+        break
+    elif option == 2:
+        print("Not implemented")
+    else:
+        print("Invalid option!")
+
 # ------ Hardcoded Variables ------
-indent = True
-songannounce = True
-commentary = True
-adverts = True
-musicpath = path + pathtype + "music"
-commentarypath = path + pathtype + "commentary"
-advertpath = path + pathtype + "advert"
 music = []
 
 # ------ Generate Arrays ------
@@ -99,7 +146,12 @@ log("main", f"\nPath Information:\nRunning Path: {path}\nPath Slash Type: {patht
 # ------ Music Function ------
 def music():
     # Select song
-    song = musicpath + pathtype + random.choice(musicfiles)
+    while True:
+        song = musicpath + pathtype + random.choice(musicfiles)
+        if ("AlbumArt_" in song) == True:
+            continue
+        else:
+            break
     # Decide song announcements
     if songannounce == True:
         announcelocation = random.randint(1,1)
@@ -152,10 +204,8 @@ def music():
             time.sleep(0.1)
         log("tts", "TTS Complete.")
     # Wait for song to complete...
-    # while channel.get_busy() == True:
-    #     time.sleep(0.5)
-    time.sleep(5)
-    sound.stop()
+    while channel.get_busy() == True:
+        time.sleep(0.5)
     log("song", "Song complete.")
 
 # ------ General Playback Function ------
