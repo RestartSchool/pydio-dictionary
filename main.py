@@ -1,8 +1,9 @@
 # Pydio
-# Made with ❤️ by Restart - 2023
+# Made with ❤️ by Restart
+# 2023-2024
 
-import os # OS - Several File Functions
-# Get current system path
+# ------ Get Path ------
+import os
 path = os.getcwd()
 pathtype = "\\"
 
@@ -10,14 +11,18 @@ pathtype = "\\"
 def log(type, content):
     # Generate log path
     logpath = path + pathtype + "logs"
-    # Writes to a log for each function, and a main log too
+    # Create log strings
     printstring = f"[{type.upper()}] {content}"
     filestring = f"\n[{type.upper()}] {content}"
+    # Create file name
     filename = f"{path}{pathtype}logs{pathtype}{type.lower()}.log"
+    # Open Log Files
     speclog = open(filename, "a")
     mainlog = open(f"{path}{pathtype}logs{pathtype}main.log", "a")
+    # Write to log files
     speclog.write(filestring)
     mainlog.write(filestring)
+    # Close logs and print to terminal
     speclog.close()
     mainlog.close()
     print(printstring)
@@ -203,7 +208,8 @@ def main():
             rngtriggeradvert = random.randint(2,4)
         else:
             rngtriggeradvert = len(musicfiles)
-        log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
+        if adverts == True:
+            log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
         for i in range(0, rngtriggeradvert):
             rngcommentary = random.randint(0,1)
             if rngcommentary == 0:
