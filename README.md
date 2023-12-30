@@ -1,6 +1,6 @@
 # Pydio
 ## Before You Run...
-Pydio is currently not in a state to be easily used. It uses several hard coded options and paths. Here's my file structure that may work for you:
+Pydio is currently not in a state to be easily used. It uses several hard coded options and paths. Here's my file structure that may work for you:\
 ├── music\
 │   └── music files here\
 ├── commentary\
