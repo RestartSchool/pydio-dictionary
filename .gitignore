@@ -1,0 +1,7 @@
+\music 
+\indents 
+\commentary
+*.log
+.replit
+poetry.lock
+pyproject.toml
