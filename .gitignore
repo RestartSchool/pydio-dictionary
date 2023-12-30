@@ -3,5 +3,6 @@
 \commentary
 *.log
 .replit
+replit.nix
 poetry.lock
 pyproject.toml

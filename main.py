@@ -7,28 +7,30 @@ def log(type, content):
     string = f"{type.upper()} {content}"
     filename = f"{type.lower()}.log"
     speclog = open(filename, "a")
-    mainlog = "main.log", "a"
+    mainlog = open("main.log", "a")
     speclog.write(string)
     mainlog.write(string)
     speclog.close()
     mainlog.close()
     print(string)
 
+# Initial Log - Import time, read current system time and log it
 import time
 t = time.localtime()
-log("init", f"{time.strftime("%H:%M:%S", t)} - Welcome to Pydio.")
+log("init", f"{time.strftime('%H:%M:%S', t)} - Welcome to Pydio.")
 
 # ------ Imports ------
-import pygame
-import random
-import os
-import pyttsx3
-from mutagen.easyid3 import EasyID3
+import pygame # Pygame - Audio
+import random # Random - Random
+import os # OS - Several File Functions
+import pyttsx3 # PYTTSX3 - Text to Speech
+from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
 log("init", "Dependencies loaded.")
 
+# Initialize Pygame
 pygame.init()
 pygame.mixer.init()
-log("init", "Pygame init success! Handing over to main functions.")
+log("init", "Pygame init success!")
 
 # ------ Hardcoded Variables ------
 indent = True
@@ -43,14 +45,15 @@ advertpath = pathtype + "advert"
 music = []
 
 # ------ Generate Arrays ------
+log("init", "Detecting music files...")
 musicfiles = os.listdir(musicpath)
-print(musicfiles)
+log("init", f"Music detection complete, {len(musicfiles)} music files detected.")
 
 # ------ Announcement Locations -----
 # 1 = start of song
 # 2 = end of song
 # 3 = song finished
-# 4 = none
+# "off" = none
 
 # ------ Music Handler ------
 def music():
