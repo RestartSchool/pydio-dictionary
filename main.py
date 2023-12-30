@@ -1,16 +1,34 @@
 # AI Radio Project
 # Restart - 2023
 
+# ------ Logging Function ------
+def log(type, content):
+    # Writes to a log for each function, and a main log too
+    string = f"{type.upper()} {content}"
+    filename = f"{type.lower()}.log"
+    speclog = open(filename, "a")
+    mainlog = "main.log", "a"
+    speclog.write(string)
+    mainlog.write(string)
+    speclog.close()
+    mainlog.close()
+    print(string)
+
+import time
+t = time.localtime()
+log("init", f"{time.strftime("%H:%M:%S", t)} - Welcome to Pydio.")
+
 # ------ Imports ------
 import pygame
 import random
-import time
 import os
 import pyttsx3
 from mutagen.easyid3 import EasyID3
+log("init", "Dependencies loaded.")
 
 pygame.init()
 pygame.mixer.init()
+log("init", "Pygame init success! Handing over to main functions.")
 
 # ------ Hardcoded Variables ------
 indent = True
@@ -33,19 +51,6 @@ print(musicfiles)
 # 2 = end of song
 # 3 = song finished
 # 4 = none
-
-# ------ Logging Function ------
-def log(type, content):
-    # Writes to a log for each function, and a main log too
-    string = f"{type.upper()} {content}"
-    filename = f"{type.lower()}.log"
-    speclog = open(filename, "a")
-    mainlog = "main.log", "a"
-    speclog.write(string)
-    mainlog.write(string)
-    speclog.close()
-    mainlog.close()
-    print(string)
 
 # ------ Music Handler ------
 def music():
@@ -106,6 +111,5 @@ def music():
     while channel.get_busy() == True:
         time.sleep(0.5)
     print("song", "Song complete.")
-
 
 music()
