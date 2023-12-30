@@ -4,43 +4,50 @@
 # ------ Logging Function ------
 def log(type, content):
     # Writes to a log for each function, and a main log too
-    string = f"\n[{type.upper()}] {content}"
+    printstring = f"[{type.upper()}] {content}"
+    filestring = f"\n[{type.upper()}] {content}"
     filename = f"{type.lower()}.log"
     speclog = open(filename, "a")
     mainlog = open("main.log", "a")
-    speclog.write(string)
-    mainlog.write(string)
+    speclog.write(filestring)
+    mainlog.write(filestring)
     speclog.close()
     mainlog.close()
-    print(string)
-
-def errorhandler(type, error):
-  print("[FATAL] The error handler has been called.")
-  log("fatal", f"Pydio has crashed during {type} stage, the time is. Details of the log are below:")
-  log("fatal", error)
-  exit(1)
+    print(printstring)
 
 # Initial Log - Import time, read current system time and log it
 import time
 t = time.localtime()
 log("init", f"{time.strftime('%H:%M:%S', t)} - Welcome to Pydio.")
 
+# ------ Error Handler Function ------
+def errorhandler(type, error):
+    print("\n[FATAL] The error handler has been called.")
+    t = time.localtime()
+    log("fatal", f"Pydio has crashed during {type} stage, the time is {time.strftime('%H:%M:%S', t)}. Details of the log are below:")
+    log("fatal", error)
+    exit(1)
+
 # ------ Imports ------
-import pygame # Pygame - Audio
-import random # Random - Random
-import os # OS - Several File Functions
-import pyttsx3 # PYTTSX3 - Text to Speech
-from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
-log("init", "Dependencies loaded.")
+try:
+    import pygame # Pygame - Audio
+    import random # Random - Random
+    import os # OS - Several File Functions
+    import pyttsx3 # PYTTSX3 - Text to Speech
+    from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
+    log("init", "Dependencies loaded.")
+except ModuleNotFoundError as error:
+    log("init", "A module has failed to import! Please ensure you have installed all required dependencies. The error handler will be called.")
+    errorhandler("init", error)
 
 # Initialize Pygame
 try:
-  pygame.init()
-  pygame.mixer.init()
-  log("init", "Pygame init success!")
+    pygame.init()
+    pygame.mixer.init()
+    log("init", "Pygame init success!")
 except pygame.error as error:
-  log("init", "Pygame initialisation has failed! The error handler will be called.")
-  errorhandler("init", error)
+    log("init", "Pygame initialisation has failed! The error handler will be called.")
+    errorhandler("init", error)
 
 # ------ Hardcoded Variables ------
 indent = True
