@@ -211,7 +211,10 @@ def main():
         if adverts == True:
             log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
         for i in range(0, rngtriggeradvert):
-            rngcommentary = random.randint(0,1)
+            if commentary == True:
+                rngcommentary = random.randint(0,1)
+            else:
+                rngcommentary = 0
             if rngcommentary == 0:
                 log("main", "No commentary selected!")
                 log("main", "Calling music function.")
