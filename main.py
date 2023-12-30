@@ -14,6 +14,12 @@ def log(type, content):
     mainlog.close()
     print(string)
 
+def errorhandler(type, error):
+  print("[FATAL] The error handler has been called.")
+  log("fatal", f"Pydio has crashed during {type} stage, the time is. Details of the log are below:")
+  log("fatal", error)
+  exit(1)
+
 # Initial Log - Import time, read current system time and log it
 import time
 t = time.localtime()
@@ -28,9 +34,13 @@ from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
 log("init", "Dependencies loaded.")
 
 # Initialize Pygame
-pygame.init()
-pygame.mixer.init()
-log("init", "Pygame init success!")
+try:
+  pygame.init()
+  pygame.mixer.init()
+  log("init", "Pygame init success!")
+except pygame.error as error:
+  log("init", "Pygame initialisation has failed! The error handler will be called.")
+  errorhandler("init", error)
 
 # ------ Hardcoded Variables ------
 indent = True
