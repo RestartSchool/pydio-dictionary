@@ -204,10 +204,8 @@ def music():
             time.sleep(0.1)
         log("tts", "TTS Complete.")
     # Wait for song to complete...
-    # while channel.get_busy() == True:
-    #     time.sleep(0.5)
-    time.sleep(5)
-    sound.stop()
+    while channel.get_busy() == True:
+        time.sleep(0.5)
     log("song", "Song complete.")
 
 # ------ General Playback Function ------
