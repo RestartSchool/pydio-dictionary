@@ -191,12 +191,19 @@ def main():
             rngtriggeradvert = random.randint(2,4)
         else:
             rngtriggeradvert = len(musicfiles)
+        log("main", f"RNG has decided {rngadvertamount} songs will be played before adverts!")
         for i in range(0, rngtriggeradvert):
             rngcommentary = random.randint(0,1)
+            log("main", "Commentary selected.")
             if rngcommentary == 0:
+                log("main", "No commentary selected!")
+                log("main", "Calling music function.")
                 music()
             elif rngcommentary == 1:
+                log("main", "Commentary selected!")
+                log("main", "Calling commentary function.")
                 play("commentary")
+                log("main", "Calling music function.")
                 music()
         if adverts == True:
             play("advert")
