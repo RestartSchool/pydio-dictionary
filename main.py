@@ -208,6 +208,7 @@ def music():
             time.sleep(0.5)
     else:
         time.sleep(5)
+        channel.stop()
     log("song", "Song complete.")
 
 # ------ General Playback Function ------
