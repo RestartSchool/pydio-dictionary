@@ -28,6 +28,9 @@ Examples:
 - `flac`
 - `ogg`
 
+`m4a` is NOT supported.
+Read more at the Pygame mixer docs: https://www.pygame.org/docs/ref/mixer.html
+
 ## Dependencies
 - Pygame - handles audio
 - Mutagen - handles MP3 metadata
