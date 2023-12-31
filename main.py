@@ -41,27 +41,6 @@ try:
         log("fatal", error)
         exit(1)
 
-    # ------ Imports ------
-    try:
-        import pygame # Pygame - Audio
-        import random # Random - Random
-        import pyttsx3 # PYTTSX3 - Text to Speech
-        from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
-        import glob
-        log("init", "Dependencies loaded.")
-    except ModuleNotFoundError as error:
-        log("init", "A module has failed to import! Please ensure you have installed all required dependencies. The error handler will be called.")
-        errorhandler("init", error)
-
-    # ------ Initialize Pygame ------
-    try:
-        pygame.init()
-        pygame.mixer.init()
-        log("init", "Pygame init success!")
-    except pygame.error as error:
-        log("init", "Pygame initialisation has failed! The error handler will be called.")
-        errorhandler("init", error)
-
     # ------ Interactive Setup - To Boolean Function ------
     def tobool(user):
         if user.lower() == "y":
@@ -116,6 +95,29 @@ try:
             print("Not implemented")
         else:
             print("Invalid option!")
+
+    # ------ Imports ------
+    try:
+        import pygame # Pygame - Audio
+        import random # Random - Random
+        if songannounce == True:
+            import pyttsx3 # PYTTSX3 - Text to Speech
+            from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
+        else:
+            pass
+        log("init", "Dependencies loaded.")
+    except ModuleNotFoundError as error:
+        log("init", "A module has failed to import! Please ensure you have installed all required dependencies. The error handler will be called.")
+        errorhandler("init", error)
+
+    # ------ Initialize Pygame ------
+    try:
+        pygame.init()
+        pygame.mixer.init()
+        log("init", "Pygame init success!")
+    except pygame.error as error:
+        log("init", "Pygame initialisation has failed! The error handler will be called.")
+        errorhandler("init", error)
 
     # ------ Generate Arrays ------
     # Music Files
