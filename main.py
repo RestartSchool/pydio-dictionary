@@ -148,7 +148,7 @@ try:
         # Select song
         while True:
             song = musicpath + pathtype + random.choice(musicfiles)
-            if ("AlbumArt_" in song) == True:
+            if ("AlbumArt_" in song) == True or (".png" in song) == True or (".jpg" in song) == True or (".jpeg" in song) == True:
                 continue
             else:
                 break
