@@ -170,11 +170,21 @@ try:
         log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
 
         # If an announcement will occur, generate text to speech now
-        if announcelocation != 4:
+        if announcelocation != "off":
             engine = pyttsx3.init()
             voices = engine.getProperty('voices')
             engine.setProperty('voice', voices[1].id)
-            text = f"Here's {audio['artist']} with {audio['title']}"
+            if len(audio['artist']) > 1:
+                artist = ""
+                for i in range(0, len(audio['artist'])):
+                    artist = artist + ((audio['artist'])[i])
+                    if i != (len(audio['artist']) - 1):
+                        artist = artist + " and "
+                    else:
+                        continue
+            else:
+                artist = audio['artist']
+            text = f"Here's {artist} with {audio['title']}"
             engine.say(text)
             log("tts", f"Generated TTS. Waiting for location...")
             log("tts", f"TTS Message: {text}")
@@ -256,6 +266,7 @@ try:
                         time.sleep(0.5)
                 else:
                     time.sleep(10)
+                    sound.stop()
             log("ad", "Complete.")
 
     # ------ Main Function ------
