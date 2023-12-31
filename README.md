@@ -1,16 +1,7 @@
 # Pydio
 ## Before You Run...
-Pydio is currently not in a state to be easily used. It uses several hard coded options and paths. Here's my file structure that may work for you:\
-├── music\
-│   └── music files here\
-├── commentary\
-│   └── commentary files here\
-├── advert\
-│   └── advert files here\
-├── logs\
-│   └── logs will appear here\
-└── main.py\
-If you use that file/folder layout on Windows, the program should work OK.
+When you run the program, you will be asked to use either Interactive Setup or a Config File to start Pydio. Please use Interactive Setup, the config file has not been implemented yet!
+
 ## Compatibility
 ### Operating Systems
 - Windows: ✅️
