@@ -94,12 +94,13 @@ def optionpath(question, default):
 
 # ------ Interactive Setup ------
 def InteractiveSetup():
-    global indent, songannounce, commentary, adverts, musicpath, commentarypath, advertpath
+    global indent, songannounce, commentary, adverts, testmode, musicpath, commentarypath, advertpath
 
     indent = optionyn("Enable indents? (not implemented yet)", True)
     songannounce = optionyn("Enable TTS song announcements?", True)
     commentary = optionyn("Enable commentary?", True)
     adverts = optionyn("Enable adverts?", True)
+    testmode = optionyn("Enable test mode?", True)
     musicpath = optionpath("Please enter the music path.", (path + pathtype + "music"))
     commentarypath = optionpath("Please enter the commentary path.", (path + pathtype + "commentary"))
     advertpath = optionpath("Please enter the advert path.", (path + pathtype + "advert"))
@@ -202,8 +203,11 @@ def music():
             time.sleep(0.1)
         log("tts", "TTS Complete.")
     # Wait for song to complete...
-    while channel.get_busy() == True:
-        time.sleep(0.5)
+    if testmode == True:
+        while channel.get_busy() == True:
+            time.sleep(0.5)
+    else:
+        time.sleep(5)
     log("song", "Song complete.")
 
 # ------ General Playback Function ------
