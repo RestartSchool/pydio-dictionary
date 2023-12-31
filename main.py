@@ -7,36 +7,6 @@ import os
 path = os.getcwd()
 pathtype = "\\"
 
-# ------ To Boolean Function ------
-def tobool(user):
-    if user.lower() == "y":
-        return True
-    else:
-        return False
-
-# ------ To Boolean Function ------
-def optionyn(question, default):
-    user = str(input(f"{question} ({default}) (y/n)>")).lower()
-    if user == "y":
-        return tobool(user)
-    elif user == "n":
-        return tobool(user)
-    else:
-        print("Invalid option, using default option.")
-        return default
-
-def optionpath(question, default):
-    user = str(input(f"{question} >"))
-    if os.path.isdir(user):
-        user = user.replace("\\", "\\\\")
-        print(user)
-        return user
-    else:
-        print("Path selected is invalid, using default path.")
-        default = default.replace("\\", "\\\\")
-        print(default)
-        return default
-
 # ------ Logging Function ------
 def log(type, content):
     # Generate log path
@@ -82,7 +52,7 @@ except ModuleNotFoundError as error:
     log("init", "A module has failed to import! Please ensure you have installed all required dependencies. The error handler will be called.")
     errorhandler("init", error)
 
-# Initialize Pygame
+# ------ Initialize Pygame ------
 try:
     pygame.init()
     pygame.mixer.init()
@@ -90,6 +60,37 @@ try:
 except pygame.error as error:
     log("init", "Pygame initialisation has failed! The error handler will be called.")
     errorhandler("init", error)
+
+# ------ Interactive Setup - To Boolean Function ------
+def tobool(user):
+    if user.lower() == "y":
+        return True
+    else:
+        return False
+
+# ------ Interactive Setup - Option Y/N Function ------
+def optionyn(question, default):
+    user = str(input(f"{question} ({default}) (y/n)>")).lower()
+    if user == "y":
+        return tobool(user)
+    elif user == "n":
+        return tobool(user)
+    else:
+        print("Invalid option, using default option.")
+        return default
+
+# ------ Interactive Setup - Option Path Function ------
+def optionpath(question, default):
+    user = str(input(f"{question} >"))
+    if os.path.isdir(user):
+        user = user.replace("\\", "\\\\")
+        print(user)
+        return user
+    else:
+        print("Path selected is invalid, using default path.")
+        default = default.replace("\\", "\\\\")
+        print(default)
+        return default
 
 # ------ Interactive Setup ------
 def InteractiveSetup():
@@ -113,9 +114,6 @@ while True:
         print("Not implemented")
     else:
         print("Invalid option!")
-
-# ------ Hardcoded Variables ------
-music = []
 
 # ------ Generate Arrays ------
 # Music Files
