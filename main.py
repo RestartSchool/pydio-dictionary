@@ -203,7 +203,7 @@ def music():
             time.sleep(0.1)
         log("tts", "TTS Complete.")
     # Wait for song to complete...
-    if testmode == True:
+    if testmode == False:
         while channel.get_busy() == True:
             time.sleep(0.5)
     else:
