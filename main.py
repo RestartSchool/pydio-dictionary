@@ -141,7 +141,7 @@ try:
     # 1 = start of song
     # 2 = end of song
     # 3 = song finished
-    # "off" = none
+    # 4"= none
 
     # ------ Music Function ------
     def music():
@@ -156,7 +156,7 @@ try:
         if songannounce == True:
             announcelocation = random.randint(1,1)
         else:
-            announcelocation = "off"
+            announcelocation = "4"
         
         log("song", f"Location for song announcement is: {announcelocation}. Starting song {song}...")
 
@@ -170,7 +170,7 @@ try:
         log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
 
         # If an announcement will occur, generate text to speech now
-        if announcelocation != "off":
+        if announcelocation != "4":
             engine = pyttsx3.init()
             voices = engine.getProperty('voices')
             engine.setProperty('voice', voices[1].id)
