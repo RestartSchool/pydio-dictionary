@@ -85,6 +85,11 @@ try:
         commentarypath = optionpath("\nPlease enter the commentary path.", (path + pathtype + "commentary"))
         advertpath = optionpath("\nPlease enter the advert path.", (path + pathtype + "advert"))
 
+    # ------ Config File Reader ------
+    def readconfigfile(path):
+        # Open config file
+        configfile = open(path, "r")
+  
     # ------ Setup Handoff ------
     option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
     while True:
