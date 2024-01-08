@@ -87,8 +87,25 @@ try:
 
     # ------ Config File Reader ------
     def readconfigfile(path):
-        # Open config file
-        configfile = open(path, "r")
+      import configparser
+      config = configparser.RawConfigParser()
+
+      # Read options section of config file
+      config.read(path)
+      options_dict = dict(config.items('OPTIONS'))
+
+      # Read path section of config file
+      config.read(path)
+      paths_dict = dict(config.items('PATHS'))
+      
+      indent = options_dict['indent'] 
+      songannounce = options_dict['songannounce'] 
+      commentary = options_dict['commentary'] 
+      adverts = options_dict['adverts'] 
+      testmode = options_dict['testmode'] 
+      musicpath = paths_dict['musicpath'] 
+      commentarypath = paths_dict['commentarypath'] 
+      advertpath = paths_dict['advertpath'] 
   
     # ------ Setup Handoff ------
     option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
@@ -97,7 +114,8 @@ try:
             InteractiveSetup()
             break
         elif option == 2:
-            print("Not implemented")
+            readconfigfile("config.cfg")
+            exit()
         else:
             print("Invalid option!")
 
