@@ -6,7 +6,7 @@
 
 # Logs and Config Files
 *.log
-*.cfg
+config.cfg
 
 # Replit Files
 .replit
