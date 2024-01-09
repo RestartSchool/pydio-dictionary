@@ -112,7 +112,7 @@ try:
             break
         elif option == 2:
             readconfigfile("config.cfg")
-            exit()
+            break
         else:
             print("Invalid option!")
 
