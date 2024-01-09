@@ -1,8 +1,14 @@
+# Default Audio Paths
 \music 
 \indents 
 \commentary
 \advert
+
+# Block Logs and Config Files
 *.log
+*.cfg
+
+# Replit Files
 .replit
 replit.nix
 poetry.lock
