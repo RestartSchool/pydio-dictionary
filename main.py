@@ -91,19 +91,19 @@ try:
 
     # ------ Config File Reader ------
     def readconfigfile(path):
-      global options_dict
+        global options_dict, paths_dict
 
-      import configparser
-      config = configparser.RawConfigParser()
+        import configparser
+        config = configparser.RawConfigParser()
 
-      # Read options section of config file, add it to dict
-      config.read(path)
-      options_dict = dict(config.items('OPTIONS'))
+        # Read options section of config file, add it to dict
+        config.read(path)
+        options_dict = dict(config.items('OPTIONS'))
 
-      # Read path section of config file, add it to dict
-      config.read(path)
-      paths_dict = dict(config.items('PATHS'))
-  
+        # Read path section of config file, add it to dict
+        config.read(path)
+        paths_dict = dict(config.items('PATHS'))
+
     # ------ Setup Handoff ------
     option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
     while True:
