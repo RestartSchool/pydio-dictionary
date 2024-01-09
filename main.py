@@ -3,6 +3,9 @@
 # 2023-2024
 
 try:
+    options_dict = {}
+    paths_dict = {}
+
     # ------ Get Path ------
     import os
     path = os.getcwd()
@@ -74,19 +77,21 @@ try:
 
     # ------ Interactive Setup ------
     def InteractiveSetup():
-        global indent, songannounce, commentary, adverts, testmode, musicpath, commentarypath, advertpath
+        global options_dict, musicpath, commentarypath, advertpath
 
-        indent = optionyn("\nEnable indents? (not implemented yet)", True)
-        songannounce = optionyn("\nEnable TTS song announcements?", True)
-        commentary = optionyn("\nEnable commentary?", True)
-        adverts = optionyn("\nEnable adverts?", True)
-        testmode = optionyn("\nEnable test mode?", True)
+        options_dict["indent"] = optionyn("\nEnable indents? (not implemented yet)", True)
+        options_dict["songannounce"] = optionyn("\nEnable TTS song announcements?", True)
+        options_dict["commentary"] = optionyn("\nEnable commentary?", True)
+        options_dict["adverts"] = optionyn("\nEnable adverts?", True)
+        options_dict["testmode"] = optionyn("\nEnable test mode?", True)
         musicpath = optionpath("\nPlease enter the music path.", (path + pathtype + "music"))
         commentarypath = optionpath("\nPlease enter the commentary path.", (path + pathtype + "commentary"))
         advertpath = optionpath("\nPlease enter the advert path.", (path + pathtype + "advert"))
 
     # ------ Config File Reader ------
     def readconfigfile(path):
+      global options_dict
+
       import configparser
       config = configparser.RawConfigParser()
 
@@ -98,11 +103,6 @@ try:
       config.read(path)
       paths_dict = dict(config.items('PATHS'))
       
-      indent = options_dict['indent'] 
-      songannounce = options_dict['songannounce'] 
-      commentary = options_dict['commentary'] 
-      adverts = options_dict['adverts'] 
-      testmode = options_dict['testmode'] 
       musicpath = paths_dict['musicpath'] 
       commentarypath = paths_dict['commentarypath'] 
       advertpath = paths_dict['advertpath'] 
@@ -123,7 +123,7 @@ try:
     try:
         import pygame # Pygame - Audio
         import random # Random - Random
-        if songannounce == True:
+        if options_dict["songannounce"] == True:
             import pyttsx3 # PYTTSX3 - Text to Speech
             from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
         else:
@@ -159,7 +159,7 @@ try:
     log("init", "Init complete! Handing over to main function.")
 
     # Overview Logs
-    log("main", f"\nWelcome! Overview:\nIndents Activated? {indent}\nSong Announce TTS Activated? {songannounce}\nCommentary Activated? {commentary}\nAdverts Activated? {adverts}\n")
+    log("main", f"\nWelcome! Overview:\nIndents Activated? {options_dict['indent']}\nSong Announce TTS Activated? {options_dict['songannounce']}\nCommentary Activated? {options_dict['commentary']}\nAdverts Activated? {options_dict['adverts']}\n")
     log("main", f"\nPath Information:\nRunning Path: {path}\nPath Slash Type: {pathtype}\nMusic Path: {musicpath}\nMusic Path: {commentarypath}\nMusic Path: {advertpath}\n")
 
     # ------ Announcement Locations -----
@@ -178,7 +178,7 @@ try:
             else:
                 break
         # Decide song announcements
-        if songannounce == True:
+        if options_dict["songannounce"] == True:
             announcelocation = random.randint(1,1)
         else:
             announcelocation = "4"
@@ -239,7 +239,7 @@ try:
                 time.sleep(0.1)
             log("tts", "TTS Complete.")
         # Wait for song to complete...
-        if testmode == False:
+        if options_dict["testmode"] == False:
             while channel.get_busy() == True:
                 time.sleep(0.5)
         else:
@@ -286,7 +286,7 @@ try:
                 log("ad", f"Playing {selection}.")
                 sound = pygame.mixer.Sound(selection)
                 channel = sound.play()
-                if testmode == False:
+                if options_dict["testmode"] == False:
                     while channel.get_busy() == True:
                         time.sleep(0.5)
                 else:
@@ -301,10 +301,10 @@ try:
                 rngtriggeradvert = random.randint(2,4)
             else:
                 rngtriggeradvert = len(musicfiles)
-            if adverts == True:
+            if options_dict["adverts"] == True:
                 log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
             for i in range(0, rngtriggeradvert):
-                if commentary == True:
+                if options_dict["commentary"] == True:
                     rngcommentary = random.randint(0,1)
                 else:
                     rngcommentary = 0
@@ -318,7 +318,7 @@ try:
                     play("commentary")
                     log("main", "Calling music function.")
                     music()
-            if adverts == True:
+            if options_dict["adverts"] == True:
                 play("advert")
             else:
                 continue
