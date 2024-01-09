@@ -46,7 +46,7 @@ try:
 
     # ------ Interactive Setup - To Boolean Function ------
     def tobool(user):
-        if user.lower() == "y":
+        if (user == True) or (user.lower() == "y") or (user.lower() == "true"):
             return True
         else:
             return False
@@ -97,12 +97,21 @@ try:
         config = configparser.RawConfigParser()
 
         # Read options section of config file, add it to dict
-        config.read(path)
-        options_dict = dict(config.items('OPTIONS'))
+        try:
+            config.read(path)
+            options_dict = dict(config.items('OPTIONS'))
+        except configparser.MissingSectionHeaderError as error:
+            log("init", "Config file malformed: OPTIONS section missing! Calling error handler...")
+            errorhandler("init", error)
 
         # Read path section of config file, add it to dict
-        config.read(path)
-        paths_dict = dict(config.items('PATHS'))
+        try:
+            config.read(path)
+            paths_dict = dict(config.items('PATHS'))
+        except configparser.MissingSectionHeaderError as error:
+            log("init", "Config file malformed: PATHS section missing! Calling error handler...")
+            errorhandler("init", error)
+
 
     # ------ Setup Handoff ------
     option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
@@ -120,14 +129,14 @@ try:
     try:
         import pygame # Pygame - Audio
         import random # Random - Random
-        if options_dict["songannounce"] == True:
+        if tobool(options_dict["songannounce"]) == True:
             import pyttsx3 # PYTTSX3 - Text to Speech
             from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
         else:
             pass
         log("init", "Dependencies loaded.")
     except ModuleNotFoundError as error:
-        log("init", "A module has failed to import! Please ensure you have installed all required dependencies. The error handler will be called.")
+        log("init", "A module has failed to import! Please ensure you have installed all required dependencies. Calling error handler...")
         errorhandler("init", error)
 
     # ------ Initialize Pygame ------
@@ -136,7 +145,7 @@ try:
         pygame.mixer.init()
         log("init", "Pygame init success!")
     except pygame.error as error:
-        log("init", "Pygame initialisation has failed! The error handler will be called.")
+        log("init", "Pygame initialisation has failed! Calling error handler...")
         errorhandler("init", error)
 
     # ------ Generate Arrays ------
@@ -145,19 +154,21 @@ try:
     musicfiles = os.listdir(paths_dict['musicpath'])
     log("init", f"Music detection complete, {len(musicfiles)} music files detected.")
     # Commentary Files
-    log("init", "Detecting commentary files...")
-    commentaryfiles = os.listdir(paths_dict['commentarypath'])
-    log("init", f"Commentary detection complete, {len(commentaryfiles)} commentary files detected.")
+    if tobool(options_dict["commentary"]) == True:
+        log("init", "Detecting commentary files...")
+        commentaryfiles = os.listdir(paths_dict['commentarypath'])
+        log("init", f"Commentary detection complete, {len(commentaryfiles)} commentary files detected.")
     # Advert Files
-    log("init", "Detecting advert files...")
-    advertfiles = os.listdir(paths_dict['advertpath'])
-    log("init", f"Advert detection complete, {len(advertfiles)} advert files detected.")
+    if tobool(options_dict["adverts"]) == True:
+        log("init", "Detecting advert files...")
+        advertfiles = os.listdir(paths_dict['advertpath'])
+        log("init", f"Advert detection complete, {len(advertfiles)} advert files detected.")
 
-    log("init", "Init complete! Handing over to main function.")
+    log("init", "Init complete! Handing over to main function.\n")
 
     # Overview Logs
-    log("main", f"\nWelcome! Overview:\nIndents Activated? {options_dict['indent']}\nSong Announce TTS Activated? {options_dict['songannounce']}\nCommentary Activated? {options_dict['commentary']}\nAdverts Activated? {options_dict['adverts']}\n")
-    log("main", f"\nPath Information:\nRunning Path: {path}\nPath Slash Type: {pathtype}\nMusic Path: {paths_dict['musicpath']}\nMusic Path: {paths_dict['commentarypath']}\nMusic Path: {paths_dict['advertpath']}\n")
+    log("main", f"Welcome! Overview:\nIndents Activated? {options_dict['indent']}\nSong Announce TTS Activated? {options_dict['songannounce']}\nCommentary Activated? {options_dict['commentary']}\nAdverts Activated? {options_dict['adverts']}\n")
+    log("main", f"Path Information:\nRunning Path: {path}\nPath Slash Type: {pathtype}\nMusic Path: {paths_dict['musicpath']}\nMusic Path: {paths_dict['commentarypath']}\nMusic Path: {paths_dict['advertpath']}\n")
 
     # ------ Announcement Locations -----
     # 1 = start of song
@@ -175,7 +186,7 @@ try:
             else:
                 break
         # Decide song announcements
-        if options_dict["songannounce"] == True:
+        if tobool(options_dict["songannounce"]) == True:
             announcelocation = random.randint(1,1)
         else:
             announcelocation = "4"
@@ -187,10 +198,11 @@ try:
         channel = sound.play()
         volume = 1
         sound.set_volume(volume)
-        audio = EasyID3(song)
-
-        log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
-
+        if tobool(options_dict["songannounce"])  == True:
+            audio = EasyID3(song)
+            log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
+        else:
+            log("song", f"Song {song} is playing...")
         # If an announcement will occur, generate text to speech now
         if announcelocation != "4":
             engine = pyttsx3.init()
@@ -236,7 +248,7 @@ try:
                 time.sleep(0.1)
             log("tts", "TTS Complete.")
         # Wait for song to complete...
-        if options_dict["testmode"] == False:
+        if tobool(options_dict["testmode"]) == False:
             while channel.get_busy() == True:
                 time.sleep(0.5)
         else:
@@ -283,7 +295,7 @@ try:
                 log("ad", f"Playing {selection}.")
                 sound = pygame.mixer.Sound(selection)
                 channel = sound.play()
-                if options_dict["testmode"] == False:
+                if tobool(options_dict["testmode"]) == False:
                     while channel.get_busy() == True:
                         time.sleep(0.5)
                 else:
@@ -298,10 +310,12 @@ try:
                 rngtriggeradvert = random.randint(2,4)
             else:
                 rngtriggeradvert = len(musicfiles)
-            if options_dict["adverts"] == True:
+            if tobool(options_dict["adverts"]) == True:
                 log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
+            else:
+                log("main", f"Adverts are disabled.")
             for i in range(0, rngtriggeradvert):
-                if options_dict["commentary"] == True:
+                if tobool(options_dict["commentary"]) == True:
                     rngcommentary = random.randint(0,1)
                 else:
                     rngcommentary = 0
@@ -315,7 +329,7 @@ try:
                     play("commentary")
                     log("main", "Calling music function.")
                     music()
-            if options_dict["adverts"] == True:
+            if tobool(options_dict["adverts"]) == True:
                 play("advert")
             else:
                 continue
