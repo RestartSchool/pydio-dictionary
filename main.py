@@ -100,16 +100,16 @@ try:
         try:
             config.read(path)
             options_dict = dict(config.items('OPTIONS'))
-        except configparser.MissingSectionHeaderError as error:
-            log("init", "Config file malformed: OPTIONS section missing! Calling error handler...")
+        except Exception as error:
+            log("init", "Config file error: Error while reading Options section! The file may be missing or malformed. Calling error handler...")
             errorhandler("init", error)
 
         # Read path section of config file, add it to dict
         try:
             config.read(path)
             paths_dict = dict(config.items('PATHS'))
-        except configparser.MissingSectionHeaderError as error:
-            log("init", "Config file malformed: PATHS section missing! Calling error handler...")
+        except Exception as error:
+            log("init", "Config file malformed: Error while reading Paths section! The file may be missing or malformed. Calling error handler...")
             errorhandler("init", error)
 
 
