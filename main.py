@@ -218,6 +218,9 @@ try:
                 continue
             else:
                 break
+        
+        # The following code is a mess and is in the process of being rewritten :)
+        
         # Decide song announcements
         if tobool(options_dict["songannounce"]) == True:
             announcelocation = random.randint(2,2)
@@ -227,14 +230,33 @@ try:
         # Log
         log("song", f"Location for song announcement is: {announcelocation}. Starting song {song}...")
 
+        sound = pygame.mixer.Sound(song)
+        volume = 1
+        sound.set_volume(volume)
+        
         # Start song
         if announcelocation == 1:
-            pass
-        else:
-            sound = pygame.mixer.Sound(song)
+            # Read metadata
+            audio = EasyID3(song)
+            
+            tts(audio, "before")
+            log("tts", f"Generated TTS. Waiting for location...")
+            #log("tts", f"TTS Message: {text}")
+
+            log("tts", f"Playing TTS.")
+            # Run TTS
+            engine.runAndWait()
+
+            # Start music
             channel = sound.play()
-            volume = 1
-            sound.set_volume(volume)
+            if tobool(options_dict["songannounce"])  == True:
+                
+                log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
+            else:
+                log("song", f"Song {song} is playing...")
+        elif announcelocation == 2:
+            # Start music
+            channel = sound.play()
             if tobool(options_dict["songannounce"])  == True:
                 audio = EasyID3(song)
                 log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
@@ -329,6 +351,7 @@ try:
     # ------ Main Function ------
     def main():
         while True:
+            # Decide amount of songs to play before rolling adverts
             if len(musicfiles) >= 4:
                 rngtriggeradvert = random.randint(2,4)
             else:
@@ -337,11 +360,14 @@ try:
                 log("main", f"RNG has decided {rngtriggeradvert} songs will be played before adverts!")
             else:
                 log("main", f"Adverts are disabled.")
+            # Song loop
             for i in range(0, rngtriggeradvert):
+                # Decide whether or not to play commentary
                 if tobool(options_dict["commentary"]) == True:
                     rngcommentary = random.randint(0,1)
                 else:
                     rngcommentary = 0
+                # Run code based on commentary
                 if rngcommentary == 0:
                     log("main", "No commentary selected!")
                     log("main", "Calling music function.")
@@ -352,6 +378,7 @@ try:
                     play("commentary")
                     log("main", "Calling music function.")
                     music()
+            # Play advert if enabled
             if tobool(options_dict["adverts"]) == True:
                 play("advert")
             else:
