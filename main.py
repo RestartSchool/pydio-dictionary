@@ -170,19 +170,23 @@ try:
     log("main", f"Welcome! Overview:\nIndents Activated? {options_dict['indent']}\nSong Announce TTS Activated? {options_dict['songannounce']}\nCommentary Activated? {options_dict['commentary']}\nAdverts Activated? {options_dict['adverts']}\n")
     log("main", f"Path Information:\nRunning Path: {path}\nPath Slash Type: {pathtype}\nMusic Path: {paths_dict['musicpath']}\nMusic Path: {paths_dict['commentarypath']}\nMusic Path: {paths_dict['advertpath']}\n")
 
-    # ------ Announcement Locations -----
+    # ------ TTS - Announcement Locations -----
     # 1 = before song
     # 2 = start of song
     # 3 = end of song
     # 4 = after song
     # 5 = none
 
+    # ------ TTS Function ------
     def tts(metadata, position):
         global engine
 
+        # Start engine
         engine = pyttsx3.init()
+        # WIP - Pick voice
         voices = engine.getProperty('voices')
         engine.setProperty('voice', voices[1].id)
+        # If there are multiple artists, separate them with "and"
         if len(metadata['artist']) > 1:
             artist = ""
             for i in range(0, len(metadata['artist'])):
@@ -193,8 +197,11 @@ try:
                     continue
         else:
             artist = metadata['artist']
+        # List of speech options
         songannouncebefore = [f"Here's {artist} with {metadata['title']}", f"Now, {metadata['title']} by {artist}", f"Now, {artist} with {metadata['title']}", f"Here's {metadata['title']} by {artist}"]
         songannounceafter = [f"That was {artist} with {metadata['title']}", f"You just heard {metadata['title']} by {artist}", f"That was the voice of {artist} with {metadata['title']}", f"You just heard {metadata['title']} by {artist}"]
+
+        # Decide positions and speech option, then talk
         if position == "before":
             text = random.choice(songannouncebefore)
             engine.say(text)
@@ -352,6 +359,7 @@ try:
 
     main()
 
+# Detect keyboard interrupt and exit gracefully
 except KeyboardInterrupt:
     log("main", "Keyboard interrupt detected, closing...")
     print("Goodbye!")
