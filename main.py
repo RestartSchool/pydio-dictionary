@@ -230,68 +230,86 @@ try:
         # Log
         log("song", f"Location for song announcement is: {announcelocation}. Starting song {song}...")
 
+        # Set up Song Player and Volume
         sound = pygame.mixer.Sound(song)
         volume = 1
         sound.set_volume(volume)
         
-        # Start song
+        # Announcement Location Decision Tree
         if announcelocation == 1:
+            # --- Before Song TTS ---
+            
+            # --- TTS ---
             # Read metadata
             audio = EasyID3(song)
             
+            # Set up TTS
             tts(audio, "before")
-            log("tts", f"Generated TTS. Waiting for location...")
-            #log("tts", f"TTS Message: {text}")
-
+            log("tts", f"Generated TTS in pos {announcelocation}.")
             log("tts", f"Playing TTS.")
+            
             # Run TTS
             engine.runAndWait()
 
+            # --- Music ---
             # Start music
             channel = sound.play()
             if tobool(options_dict["songannounce"])  == True:
-                
+                # No need to read metadata as it was already read by TTS
                 log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
             else:
                 log("song", f"Song {song} is playing...")
+
+            if tobool(options_dict["testmode"]) == False:
+                while channel.get_busy() == True:
+                    time.sleep(0.5)
+            else:
+                time.sleep(5)
+                channel.stop()
+
         elif announcelocation == 2:
+            # --- Start of Song TTS ---
+            
+            # --- Music ---
             # Start music
             channel = sound.play()
             if tobool(options_dict["songannounce"])  == True:
                 audio = EasyID3(song)
+                print(audio)
                 log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
             else:
                 log("song", f"Song {song} is playing...")
-            # If an announcement will occur, generate text to speech now
+            
+            # --- TTS ---
+            # Generate TTS
+            tts(audio, "before")
+            log("tts", f"Generated TTS in pos {announcelocation}. Waiting for location...")
+            
+            # Wait for song to start
+            time.sleep(5)
 
-            if announcelocation == 2:
-                tts(audio, "before")
-                log("tts", f"Generated TTS. Waiting for location...")
-                #log("tts", f"TTS Message: {text}")
-                
-                # Wait for song to start
-                time.sleep(5)
-
-                log("tts", "Preparing for TTS... fading down...")
-                # Fade down
-                for i in range(0,8):
-                    volume = volume - 0.1
-                    sound.set_volume(volume)
-                    time.sleep(0.1)
-                
-                log("tts", f"Playing TTS.")
-                # Run TTS
-                engine.runAndWait()
-                
-                time.sleep(1)
-                
-                log("tts", "Fading up...")
-                # Fade up
-                for i in range(0,8):
-                    volume = volume + 0.1
-                    sound.set_volume(volume)
-                    time.sleep(0.1)
-                log("tts", "TTS Complete.")
+            log("tts", "Preparing for TTS... fading down...")
+            # Fade down
+            for i in range(0,8):
+                volume = volume - 0.1
+                sound.set_volume(volume)
+                time.sleep(0.1)
+            
+            log("tts", f"Playing TTS.")
+            # Run TTS
+            engine.runAndWait()
+            
+            time.sleep(1)
+            
+            log("tts", "Fading up...")
+            # Fade up
+            for i in range(0,8):
+                volume = volume + 0.1
+                sound.set_volume(volume)
+                time.sleep(0.1)
+            log("tts", "TTS Complete.")
+            
+            # --- Delay ---
             # Wait for song to complete...
             if tobool(options_dict["testmode"]) == False:
                 while channel.get_busy() == True:
@@ -299,7 +317,84 @@ try:
             else:
                 time.sleep(5)
                 channel.stop()
+            
+            # Song complete, log it
             log("song", "Song complete.")
+        
+        elif announcelocation == 3:
+            # End of Song TTS
+            
+            # --- Music ---
+            # Start music
+            channel = sound.play()
+            if tobool(options_dict["songannounce"])  == True:
+                audio = EasyID3(song)
+                log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
+            else:
+                log("song", f"Song {song} is playing...")
+            
+            # --- Delay ---
+            # Wait until 20 seconds remaining - not working
+            if tobool(options_dict["testmode"]) == False:
+                print(channel.get_length())
+                while channel.get_busy() == True:
+                    time.sleep(0.5)
+            else:
+                time.sleep(5)
+                channel.stop()
+
+            # --- TTS ---
+            # Generate TTS
+            tts(audio, "before")
+            log("tts", f"Generated TTS in pos {announcelocation}. Waiting for location...")
+            log("tts", "Preparing for TTS... fading down...")
+            # Fade down
+            for i in range(0,8):
+                volume = volume - 0.1
+                sound.set_volume(volume)
+                time.sleep(0.1)
+            
+            log("tts", f"Playing TTS.")
+            # Run TTS
+            engine.runAndWait()
+            
+            time.sleep(1)
+            
+            log("tts", "Fading up...")
+            # Fade up
+            for i in range(0,8):
+                volume = volume + 0.1
+                sound.set_volume(volume)
+                time.sleep(0.1)
+            log("tts", "TTS Complete.")
+        
+        elif announcelocation == 4:
+            pass
+        
+        elif announcelocation == 5:
+            # --- No TTS ---
+            
+            # --- Music ---
+            # Start music
+            channel = sound.play()
+            if tobool(options_dict["songannounce"])  == True:
+                audio = EasyID3(song)
+                log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
+            else:
+                log("song", f"Song {song} is playing...")
+            
+            # --- Delay ---
+            # Wait for song to complete...
+            if tobool(options_dict["testmode"]) == False:
+                while channel.get_busy() == True:
+                    time.sleep(0.5)
+            else:
+                time.sleep(5)
+                channel.stop()
+            
+            # Song complete, log it
+            log("song", "Song complete.")
+
 
     # ------ General Playback Function ------
     def play(type):
