@@ -481,7 +481,7 @@ try:
 
     main()
 
-# Detect keyboard interrupt and exit gracefully
+# Detect keyboard interrupt and exit cleanly
 except KeyboardInterrupt:
     log("main", "Keyboard interrupt detected, closing...")
     print("Goodbye!")
