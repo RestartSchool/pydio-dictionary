@@ -3,10 +3,11 @@
 # 2023-2024
 
 try:
+    # Define dicts
     options_dict = {}
     paths_dict = {}
 
-    # ------ Get Path ------
+    # ------ Get Working Path ------
     import os
     path = os.getcwd()
     pathtype = "\\"
@@ -46,30 +47,42 @@ try:
 
     # ------ Interactive Setup - To Boolean Function ------
     def tobool(user):
+        # If user input is Yes, convert to True bool
         if (user == True) or (user.lower() == "y") or (user.lower() == "true"):
             return True
+        # If it's anything else, convert to False bool
         else:
             return False
 
     # ------ Interactive Setup - Option Y/N Function ------
     def optionyn(question, default):
+        # Make our question string
         user = str(input(f"{question} ({default}) (y/n)>")).lower()
+        # If yes, use tobool function to convert to True bool
         if user == "y":
             return tobool(user)
+        # If no, use tobool function to convert to False bool
         elif user == "n":
             return tobool(user)
+        # If invalid answer, use default answer from function
         else:
             print("Invalid option, using default option.")
             return default
 
     # ------ Interactive Setup - Option Path Function ------
     def optionpath(question, default):
+        # Ask Make our question string
         user = str(input(f"{question} >"))
+        # Decide if path is valid
         if os.path.isdir(user):
+            # Make backslashes compliant with Windows Pathing
+            # This is hardcoded to Windows and might not work on Linux / macOS
             user = user.replace("\\", "\\\\")
             print(user)
             return user
         else:
+            # Make backslashes compliant with Windows Pathing
+            # This is hardcoded to Windows and might not work on Linux / macOS
             print("Path selected is invalid, using default path.")
             default = default.replace("\\", "\\\\")
             print(default)
@@ -79,7 +92,7 @@ try:
     def InteractiveSetup():
         global options_dict, paths_dict
 
-        #Ask questions, add answers to relevant dict
+        #Ask questions, add answers to relevant dict / dict key
         options_dict["indent"] = optionyn("\nEnable indents? (not implemented yet)", True)
         options_dict["songannounce"] = optionyn("\nEnable TTS song announcements?", True)
         options_dict["commentary"] = optionyn("\nEnable commentary?", True)
@@ -91,8 +104,10 @@ try:
 
     # ------ Config File Reader ------
     def readconfigfile(path):
+        #Make dicts global
         global options_dict, paths_dict
 
+        # Set up reader
         import configparser
         config = configparser.RawConfigParser()
 
@@ -114,12 +129,13 @@ try:
 
 
     # ------ Setup Handoff ------
-    option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File (not implemented yet)\n> "))
+    option = int(input("Please select an option:\n1: Use Interactive Setup\n2. Use Config File\n> "))
     while True:
         if option == 1:
             InteractiveSetup()
             break
         elif option == 2:
+            # Hardcoded path, need to change this
             readconfigfile("config.cfg")
             break
         else:
@@ -127,8 +143,9 @@ try:
 
     # ------ Imports ------
     try:
+        # Load required functions
         import pygame # Pygame - Audio
-        import random # Random - Random
+        import random # Random - Random Values
         if tobool(options_dict["songannounce"]) == True:
             import pyttsx3 # PYTTSX3 - Text to Speech
             from mutagen.easyid3 import EasyID3 # Mutagen (EasyID3) - Audio Metadata
@@ -150,15 +167,18 @@ try:
 
     # ------ Generate Arrays ------
     # Music Files
+    # Music files are always searched as are mandatory for Pydio to function
     log("init", "Detecting music files...")
     musicfiles = os.listdir(paths_dict['musicpath'])
     log("init", f"Music detection complete, {len(musicfiles)} music files detected.")
     # Commentary Files
+    # If commentary is disabled, we don't bother trying to search for them
     if tobool(options_dict["commentary"]) == True:
         log("init", "Detecting commentary files...")
         commentaryfiles = os.listdir(paths_dict['commentarypath'])
         log("init", f"Commentary detection complete, {len(commentaryfiles)} commentary files detected.")
     # Advert Files
+    # If adverts are disabled, we don't bother trying to search for them
     if tobool(options_dict["adverts"]) == True:
         log("init", "Detecting advert files...")
         advertfiles = os.listdir(paths_dict['advertpath'])
@@ -166,11 +186,11 @@ try:
 
     log("init", "Init complete! Handing over to main function.\n")
 
-    # Overview Logs
+    # Write Overview to Logs
     log("main", f"Welcome! Overview:\nIndents Activated? {options_dict['indent']}\nSong Announce TTS Activated? {options_dict['songannounce']}\nCommentary Activated? {options_dict['commentary']}\nAdverts Activated? {options_dict['adverts']}\n")
     log("main", f"Path Information:\nRunning Path: {path}\nPath Slash Type: {pathtype}\nMusic Path: {paths_dict['musicpath']}\nMusic Path: {paths_dict['commentarypath']}\nMusic Path: {paths_dict['advertpath']}\n")
 
-    # ------ TTS - Announcement Locations -----
+    # ------ Reference: TTS - Announcement Locations -----
     # 1 = before song
     # 2 = start of song
     # 3 = end of song
@@ -179,11 +199,12 @@ try:
 
     # ------ TTS Function ------
     def tts(metadata, position):
+        # Make engine global, may try to find a better way to do this
         global engine
 
         # Start engine
         engine = pyttsx3.init()
-        # WIP - Pick voice
+        # WIP - Pick voice, currently hardcoded but the user may have a choice soon
         voices = engine.getProperty('voices')
         engine.setProperty('voice', voices[1].id)
         # If there are multiple artists, separate them with "and"
@@ -201,7 +222,7 @@ try:
         songannouncebefore = [f"Here's {artist} with {metadata['title']}", f"Now, {metadata['title']} by {artist}", f"Now, {artist} with {metadata['title']}", f"Here's {metadata['title']} by {artist}"]
         songannounceafter = [f"That was {artist} with {metadata['title']}", f"You just heard {metadata['title']} by {artist}", f"That was the voice of {artist} with {metadata['title']}", f"You just heard {metadata['title']} by {artist}"]
 
-        # Decide positions and speech option, then talk
+        # Decide positions and speech option, then load up the speech
         if position == "before":
             text = random.choice(songannouncebefore)
             engine.say(text)
@@ -260,6 +281,8 @@ try:
             else:
                 log("song", f"Song {song} is playing...")
 
+            # --- Delay ---
+            # Wait for song to complete...
             if tobool(options_dict["testmode"]) == False:
                 while channel.get_busy() == True:
                     time.sleep(0.5)
@@ -369,6 +392,8 @@ try:
             log("tts", "TTS Complete.")
         
         elif announcelocation == 4:
+            # --- After Song TTS ---
+            # Incomplete
             pass
         
         elif announcelocation == 5:
@@ -481,7 +506,7 @@ try:
 
     main()
 
-# Detect keyboard interrupt and exit gracefully
+# Detect keyboard interrupt and exit cleanly
 except KeyboardInterrupt:
     log("main", "Keyboard interrupt detected, closing...")
     print("Goodbye!")
