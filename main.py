@@ -393,8 +393,40 @@ try:
         
         elif announcelocation == 4:
             # --- After Song TTS ---
-            # Incomplete
-            pass
+
+            # --- TTS ---
+            # Read metadata
+            audio = EasyID3(song)
+
+            # --- Music ---
+            # Start music
+            channel = sound.play()
+            if tobool(options_dict["songannounce"])  == True:
+                # No need to read metadata as it was already read by TTS
+                log("song", f"Song {audio['title']} by {audio['artist']} is playing...")
+            else:
+                log("song", f"Song {song} is playing...")
+
+            # --- Delay ---
+            # Wait for song to complete...
+            if tobool(options_dict["testmode"]) == False:
+                while channel.get_busy() == True:
+                    time.sleep(0.5)
+            else:
+                time.sleep(5)
+                channel.stop()
+
+            # --- TTS ---
+            # Read metadata
+            audio = EasyID3(song)
+            
+            # Set up TTS
+            tts(audio, "before")
+            log("tts", f"Generated TTS in pos {announcelocation}.")
+            log("tts", f"Playing TTS.")
+            
+            # Run TTS
+            engine.runAndWait()
         
         elif announcelocation == 5:
             # --- No TTS ---
